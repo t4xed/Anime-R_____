@@ -1,20 +1,22 @@
+local InfiniteMath = require(game:GetService("ReplicatedStorage").Cryptware.InfiniteMath)
+
 return {
 	PlayerData = {
-		Essence = 0,
-		Power = 1,
-		Luck = 1,
+		Essence = InfiniteMath.new(0),
+		Power = InfiniteMath.new(1),
+		Luck = InfiniteMath.new(1),
 	},
 	
 	LevelData = {
-		Level = 1,
+		Level = 0,
 		CurrentExp = 0,
-		MaxExp = 110,
+		MaxExp = 10,
 		ExpMulti = 1.0,
 	},
 	
 	Leaderstats = {
-		{ Name = "Power", Type = "NumberValue" },
-		{ Name = "Essence", Type = "NumberValue" },
+		"Power",
+		"Essence",
 	},
 	
 	Potions = {
@@ -26,16 +28,16 @@ return {
 	
 	PlayerStats = {
 		Totals = {
-			Power = 1,
-			Essence = 1,
-			MobsKilled = 0,
+			Power = InfiniteMath.new(1),
+			Essence = InfiniteMath.new(1),
+			MobsKilled = InfiniteMath.new(0),
 			IslandsUnlocked = 1,
 		},
 		
 		Current = {
-			Power = 1,
-			Essence = 1,
-			MobsKilled = 0,
+			Power = InfiniteMath.new(1),
+			Essence = InfiniteMath.new(1),
+			MobsKilled = InfiniteMath.new(0),
 			IslandsUnlocked = 1,
 		}
 	},
@@ -64,5 +66,7 @@ return {
 	Story = {},
 	IslandsUnlocked = {},
 	BoatsUnlocked = {},
+
+	Gamepasses = {},
 	Settings = {},
 }

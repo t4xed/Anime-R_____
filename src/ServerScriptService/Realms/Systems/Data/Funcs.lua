@@ -2,6 +2,8 @@ local Funcs = {}
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local BigNum = require(ReplicatedStorage.Cryptware.BigNum)
 
 local function deepSearch(tbl, ...)
 	local keys = {...}
@@ -22,11 +24,46 @@ function Funcs:Init(Data)
 	function Data:Set(player, key, value, ...)
 		local toSet = deepSearch(self.Profiles[player].Data, ...)
 		
-		if toSet then
+		if toSet and toSet[key] then
 			toSet[key] = value
+			self.Leaderstats:Update(player, key, toSet[key])
 		end
+	end
+
+	function Data:Add(player, key, value, ...)
+		local toSet = deepSearch(self.Profiles[player].Data, ...)
 		
-		self.Leaderstats:Update(player, key, toSet[key])
+		if toSet and toSet[key] then
+			toSet[key] += value
+			self.Leaderstats:Update(player, key, toSet[key])
+		end
+	end
+
+	function Data:Sub(player, key, value, ...)
+		local toSet = deepSearch(self.Profiles[player].Data, ...)
+		
+		if toSet and toSet[key] then
+			toSet[key] -= value
+			self.Leaderstats:Update(player, key, toSet[key])
+		end
+	end
+
+	function Data:Mul(player, key, value, ...)
+		local toSet = deepSearch(self.Profiles[player].Data, ...)
+		
+		if toSet and toSet[key] then
+			toSet[key] *= value
+			self.Leaderstats:Update(player, key, toSet[key])
+		end
+	end
+
+	function Data:Div(player, key, value, ...)
+		local toSet = deepSearch(self.Profiles[player].Data, ...)
+		
+		if toSet and toSet[key] then
+			toSet[key] /= value
+			self.Leaderstats:Update(player, key, toSet[key])
+		end
 	end
 	
 	function Data:GetProfile(player)

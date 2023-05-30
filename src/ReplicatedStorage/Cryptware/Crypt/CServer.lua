@@ -118,14 +118,21 @@ local function initData()
 	end
 
 	if ds.PlayerAdded then
+		for _, plr in Players:GetPlayers() do
+			task.spawn(function()
+				ds:PlayerAdded(plr)
+				ds.Ready = true
+			end)
+		end
 		Players.PlayerAdded:Connect(function(player)
 			ds:PlayerAdded(player)
-			ds.Ready = if not ds.Ready then true else nil
+			ds.Ready = true
 		end)
 	end
 
 	if not ds.Ready then
 		repeat task.wait() until ds.Ready
+		ds.Ready = nil
 	end
 
 	if ds.Start then
@@ -239,7 +246,9 @@ function CryptServer.Start()
 		task.spawn(function()
 			if system.PlayerAdded then
 				for _, plr in Players:GetPlayers() do
-					task.spawn(system.PlayerAdded, system, plr)
+					task.spawn(function()
+						system:PlayerAdded(plr)
+					end)
 				end
 				Players.PlayerAdded:Connect(function(player)
 					system:PlayerAdded(player)

@@ -5,8 +5,6 @@ local Crypt = require(ReplicatedStorage.Cryptware.Crypt)
 local Data = Crypt.Register({ Name = "Data" })
 
 function Data:Init()
-	self.Leaderstats = Crypt.Import("Leaderstats")
-	
 	local key = self.Util.KeyHandler:GetKey()
 	local ProfileService = self.Util.ProfileService
 	local DefaultData = self.Util.DefaultData
@@ -16,6 +14,10 @@ function Data:Init()
 	self.UseMock = true
 
 	require(script.Funcs):Init(self)
+end
+
+function Data:Start()
+	self.Leaderstats = Crypt.Import("Leaderstats")
 end
 
 return Data

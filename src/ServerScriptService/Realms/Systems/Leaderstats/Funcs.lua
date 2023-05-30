@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 local Assets = ReplicatedStorage.Assets
+local InfiniteMath = require(ReplicatedStorage.Cryptware.InfiniteMath)
 
 local function clone(tbl)
 	local newTbl = {}
@@ -19,10 +20,10 @@ end
 
 function Funcs:Init(Leaderstats)
 	function Leaderstats:Update(player, leaderstat, value)
-		local ldsObj = player.leaderstats:FindFirstChild(leaderstat)
+		local ldsObj = player.leaderstats:WaitForChild(leaderstat, 5)
 		
 		if ldsObj then
-			ldsObj.Value = self.Util.Abbreviate:Abbreviate(value)
+			ldsObj.Value = value:GetSuffix()
 		end
 	end
 	
@@ -33,10 +34,12 @@ function Funcs:Init(Leaderstats)
 		leaderstats.Name = "leaderstats"
 		leaderstats.Parent = player
 		
-		for _, ldsData in profile.Data.Leaderstats do
-			local ldsValue = Instance.new(ldsData.Type)
-			ldsValue.Name = ldsData.Name
-			ldsValue.Value =  self.Util.Abbreviate:Abbreviate(profile.Data.PlayerData[ldsData.Name])
+		for _, lds in profile.Data.Leaderstats do
+			local ldsValue = Instance.new("StringValue")
+			local ldsData = InfiniteMath.new(profile.Data.PlayerData[lds])
+
+			ldsValue.Name = lds
+			ldsValue.Value = ldsData:GetSuffix()
 			ldsValue.Parent = leaderstats
 		end
 	end

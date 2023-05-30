@@ -3,8 +3,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Crypt = require(ReplicatedStorage.Cryptware.Crypt)
 
 local Essence = Crypt.Register({ Name = "Essence" }).Expose({
-	RE = { "UpdateEssence" },
-	RF = {}
+	RE = {},
+	RF = { "MakePurchase" }
 })
 
 function Essence:Init()
@@ -15,10 +15,6 @@ end
 function Essence:Start()
 	self.Data = Crypt.Import("Data")
 	self.Profiles = self.Data:GetProfiles()
-end
-
-function Essence:PlayerRemoving(player)
-	
 end
 
 return Essence
