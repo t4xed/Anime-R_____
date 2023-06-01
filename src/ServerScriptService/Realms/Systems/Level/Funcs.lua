@@ -74,17 +74,15 @@ function Funcs:Init(Level)
 	function Level:AddExp(player, amt)
 		local profile = self.Profiles[player]
 		local levelData = profile.Data.LevelData
+		local multis = profile.Data.Multipliers
 		
-		levelData.CurrentExp += amt * levelData.ExpMulti
+		levelData.CurrentExp += amt * (multis.Exp > 0 and multis.Exp or 1)
 		self:CheckExp(levelData, amt)
 
 		return levelData
 	end
 	
 	function Level:PlayerAdded(player)
-		self.Data:Add(player, "Power", InfiniteMath.new(10) ^ InfiniteMath.new(12000) * 999.9, "PlayerData")
-		self.Data:Add(player, "Essence", InfiniteMath.new(10) ^ InfiniteMath.new(12000) * 999.9, "PlayerData")
-		
 		self.GetInfo:Fire(player)
 	end
 end

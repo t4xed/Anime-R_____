@@ -81,7 +81,8 @@ end
 
 function CryptClient.Include(path: Folder)
 	for _, module in path:GetChildren() do
-		require(module)
+		local s, e =  pcall(require, module)
+		if not s then warn(e) end
 	end
 end
 
@@ -101,13 +102,17 @@ function CryptClient.Start()
 
 	for _, handler in handlers do
 		if handler.Init then
-			handler:Init()
+			local s, e = pcall(handler.Init, handler)
+			if not s then warn(e) end
 		end
 	end
 
 	for _, handler in handlers do
 		if handler.Start then
-			task.spawn(handler.Start, handler)
+			local s, e = pcall(function()
+				task.spawn(handler.Start, handler)
+			end)
+			if not s then warn(e) end
 		end
 	end
 end

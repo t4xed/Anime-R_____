@@ -5,6 +5,11 @@ local Crypt = require(ReplicatedStorage.Cryptware.Crypt)
 local Leaderstats = Crypt.Register({ Name = "Leaderstats" })
 
 function Leaderstats:Init()
+	self.DisplayStats = {
+		"Power",
+		"Essence"
+	}
+	
 	require(script.Funcs):Init(self)
 end
 

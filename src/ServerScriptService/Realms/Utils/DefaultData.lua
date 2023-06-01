@@ -11,19 +11,13 @@ return {
 		Level = 0,
 		CurrentExp = 0,
 		MaxExp = 10,
-		ExpMulti = 1.0,
 	},
-	
-	Leaderstats = {
-		"Power",
-		"Essence",
-	},
-	
-	Potions = {
+
+	Multipliers = {
 		Essence = 0,
 		Power = 0,
-		Exp = 0,
 		Luck = 0,
+		Exp = 0,
 	},
 	
 	PlayerStats = {
@@ -46,9 +40,32 @@ return {
 		Swords = {},
 		Items = {},
 		FightingStyles = {},
+
 		Accessories = {
 			Armor = {},
-		}
+		},
+
+		Potions = {
+			Essence = {
+				Owned = { ["3"] = 0, ["10"] = 0, ["35"] = 0, ["130"] = 0 },
+				Time = 0,
+			},
+
+			Power = {
+				Owned = { ["3"] = 0, ["10"] = 0, ["35"] = 0, ["130"] = 0 },
+				Time = 0,
+			},
+
+			Exp = {
+				Owned = { ["3"] = 0, ["10"] = 0, ["35"] = 0, ["130"] = 0 },
+				Time = 0,
+			},
+
+			Luck = {
+				Owned = { ["3"] = 0, ["10"] = 0, ["35"] = 0, ["130"] = 0 },
+				Time = 0,
+			},
+		},
 	},
 	
 	Quests = {

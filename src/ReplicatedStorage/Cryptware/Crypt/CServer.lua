@@ -144,7 +144,8 @@ end
 
 function CryptServer.Include(path: Folder)
 	for _, module in path:GetChildren() do
-		require(module)
+		local s, e =  pcall(require, module)
+		if not s then warn(e) end
 	end
 end
 
@@ -236,11 +237,15 @@ function CryptServer.Start()
 		end
 		
 		if system.Init then
-			system:Init()
+			local s, e = pcall(system.Init, system)
+			if not s then warn(e) end
 		end
 		
 		if system.Start then
-			system:Start()
+			local s, e = pcall(function()
+				task.spawn(system.Start, system)
+			end)
+			if not s then warn(e) end
 		end
 		
 		task.spawn(function()

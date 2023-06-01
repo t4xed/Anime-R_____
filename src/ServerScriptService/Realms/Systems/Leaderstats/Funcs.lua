@@ -1,22 +1,7 @@
 local Funcs = {}
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Players = game:GetService("Players")
-
-local Assets = ReplicatedStorage.Assets
 local InfiniteMath = require(ReplicatedStorage.Cryptware.InfiniteMath)
-
-local function clone(tbl)
-	local newTbl = {}
-	for index, value in tbl do
-		if type(value) == "table" then
-			newTbl[index] = clone(value)
-		else
-			newTbl[index] = value
-		end
-	end
-	return newTbl
-end
 
 function Funcs:Init(Leaderstats)
 	function Leaderstats:Update(player, leaderstat, value)
@@ -34,7 +19,7 @@ function Funcs:Init(Leaderstats)
 		leaderstats.Name = "leaderstats"
 		leaderstats.Parent = player
 		
-		for _, lds in profile.Data.Leaderstats do
+		for _, lds in self.DisplayStats do
 			local ldsValue = Instance.new("StringValue")
 			local ldsData = InfiniteMath.new(profile.Data.PlayerData[lds])
 

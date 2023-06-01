@@ -11,7 +11,7 @@ function Data:Init()
 
 	self.ProfileStore = ProfileService.GetProfileStore(key, DefaultData)
 	self.Profiles = {}
-	self.UseMock = true
+	--self.UseMock = true
 
 	require(script.Funcs):Init(self)
 end

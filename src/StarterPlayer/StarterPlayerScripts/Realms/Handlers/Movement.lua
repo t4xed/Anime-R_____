@@ -31,13 +31,13 @@ function Movement:HandleHumanoid()
 	Humanoid:GetAttributeChangedSignal("JumpPower"):Connect(function()
 		Humanoid.JumpPower = Humanoid:GetAttribute("JumpPower")
 	end)
-	
+
 	Humanoid.Jumping:Connect(function()
 		if not self.JumpDebounce then
 			self.JumpDebounce = true
-			task.wait(.75)
+			task.wait(.1)
 			Humanoid:SetAttribute("JumpPower", 0)
-			task.wait(2)
+			task.wait(1)
 			Humanoid:SetAttribute("JumpPower", Humanoid:GetAttribute("MinJumpPower"))
 			self.JumpDebounce = false
 		end
@@ -55,7 +55,7 @@ function Movement:HandleCharacter()
 	end)
 	
 	local function updateCharacterState()
-		if self.CharacterState.Bound then
+		if self.Busy or self.CharacterState.Bound then
 			return
 		end
 
@@ -84,14 +84,16 @@ function Movement:HandleCharacter()
 		for _, key in keys do
 			if UserInputService:IsKeyDown(Enum.KeyCode[key]) and not isRunning then
 				state = "Walking"
+				break
 			elseif UserInputService:IsKeyDown(Enum.KeyCode[key]) and isRunning then
 				state = "Running"
+				break
 			end
 		end
 
-		state = UserInputService:IsKeyDown(Enum.KeyCode.Space) and Humanoid.JumpPower > 0 and "Jumping" or state
+		state = UserInputService:IsKeyDown(Enum.KeyCode.Space) and Humanoid.FloorMaterial == Enum.Material.Air and "Jumping" or state
 
-		if state == "Jumping" then
+		if state == "Jumping" or state == "Falling" then
 			workspace.Gravity = 320
 		else
 			workspace.Gravity = 196.2
@@ -134,6 +136,15 @@ function Movement:HandleCharacter()
 
 		if input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.ButtonA then
 			HandleRunning()
+		end
+	end)
+
+	UserInputService.InputChanged:Connect(function(input, GPE)
+		if GPE then
+			self.Busy =	true
+			return
+		else
+			self.Busy =	false
 		end
 	end)
 	
