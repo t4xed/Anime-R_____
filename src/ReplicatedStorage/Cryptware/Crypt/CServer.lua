@@ -126,7 +126,11 @@ local function initData()
 		end
 		Players.PlayerAdded:Connect(function(player)
 			ds:PlayerAdded(player)
-			ds.Ready = true
+			repeat task.wait() until not player or ds.Profiles[player]
+
+			if player then
+				ds.Ready = true
+			end
 		end)
 	end
 

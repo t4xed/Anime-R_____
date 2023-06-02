@@ -26,8 +26,9 @@ end
 function Admin:Start()
 	self.Data = Crypt.Import("Data")
     self.Potions = Crypt.Import("Potions")
-	self.Profiles = self.Data:GetProfiles()
+    self.Level = Crypt.Import("Level")
     
+	self.Profiles = self.Data:GetProfiles()
     require(script.Commands):Init(self)
 end
 

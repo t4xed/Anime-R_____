@@ -32,7 +32,7 @@ function UIFuncs:HandleQuickCommand()
             end
         end
     end)
-
+    
     cmdBox:GetPropertyChangedSignal("Text"):Connect(function()
         pcall(function()
             if #cmdBox.Text > 0 then
@@ -58,14 +58,14 @@ function UIFuncs:HandleQuickCommand()
                 setting = false
             end
     
-            local str = cmdBox.Text:gsub("/", "")
+            local str = cmdBox.Text
             local args = str:split(" ")
             
             if not args[1] then
                 return
             end
     
-            if args[2] and not args[2]:match("%a") or args[2] and not Commands.Util:IsCommand(args[1]) then
+            if args[2] and not args[2]:match("[%a%d]") or args[2] and not Commands.Util:IsCommand(args[1]) then
                 foundCmd = nil
                 Commands.Util:FindCommand(" ")
                 foundLabel.Text = ""
@@ -83,16 +83,16 @@ function UIFuncs:HandleQuickCommand()
                 foundLabel.Text = ""
             end
     
-            if not args[2] or args[3] and not Commands.Util:IsPlayer(args[2]) then
+            if not args[2] or args[3] and not Commands.Util:IsPlayer(args[2]) and not table.find(Commands.IgnoreTarget, foundCmd.Name) then
                 foundTarget = nil
                 Commands.Util:FindTarget(" ")
                 foundLabel.Text = `{foundCmd.Name:lower()} `
                 return
             end
-    
+            
             local target, isDisplay = Commands.Util:FindTarget(args[2])
         
-            if target then
+            if target and not table.find(Commands.IgnoreTarget, foundCmd.Name) then
                 foundTarget = target
                 foundLabel.Text = `{foundCmd.Name:lower()} {isDisplay and target.DisplayName or target.Name}`
             else
@@ -101,7 +101,7 @@ function UIFuncs:HandleQuickCommand()
                 foundLabel.Text = `{foundCmd.Name:lower()} `
             end
     
-            if foundCmd and foundTarget and args[3] then
+            if foundCmd and args[3] then
                 foundLabel.Text = ""
             end
         end)
@@ -112,7 +112,7 @@ function UIFuncs:HandleQuickCommand()
             return
         end
 
-        local str = cmdBox.Text:gsub("/", "")
+        local str = cmdBox.Text
         local args = str:split(" ")
         Commands.Util:RunCommand(args)
 

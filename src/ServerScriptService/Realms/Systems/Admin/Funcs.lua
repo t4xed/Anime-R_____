@@ -12,7 +12,7 @@ function Funcs:Init(Admin)
         local id = tostring(player.UserId)
         local profile = Admin.Profiles[player]
     
-        if profile.Data.Administrator or Admin.Administrators[id] then
+        if profile.Data.Administrator or Admin.Administrators[id] and Admin.Commands[cmd] then
             Admin.Commands[cmd](player, ...)
         end
     end)

@@ -80,16 +80,21 @@ function Funcs:Init(Data)
 			profile = self.ProfileStore:LoadProfileAsync("Player_" .. player.UserId)
 		end
 		if profile ~= nil then
-			profile:AddUserId(player.UserId)
-			profile:Reconcile()
-			profile:ListenToRelease(function()
-				self.Profiles[player] = nil
-				player:Kick()
-			end)
-			if player:IsDescendantOf(Players) == true then
-				self.Profiles[player] = profile
-			else
+			if profile.Data.Ban.Active then
+				profile.Data.Ban.Active = not profile.Data.Ban.Active
 				profile:Release()
+				player:Kick("You have been permanently banned.")
+			else
+				profile:Reconcile()
+				profile:ListenToRelease(function()
+					self.Profiles[player] = nil
+					player:Kick(self.KickMessage)
+				end)
+				if player:IsDescendantOf(Players) == true then
+					self.Profiles[player] = profile
+				else
+					profile:Release()
+				end
 			end
 		else
 			player:Kick() 

@@ -18,6 +18,8 @@ function CommandUtils:Init(Commands)
         for _, player in Players:GetPlayers() do
             if player.Name:lower() == plr:lower() then
                 return true
+            elseif player.DisplayName:lower() == plr:lower() then
+                return true
             end
         end
         return false
@@ -25,7 +27,7 @@ function CommandUtils:Init(Commands)
 
     function Commands.Util:IsCommand(cmd)
         for cmdName, cmdFunc in Commands do
-            if cmdName:lower() == cmd:lower() and type(cmdFunc) == "function" and not table.find(blacklisted, cmd) then
+            if type(cmdName) == "string" and cmdName:lower() == cmd:lower() and type(cmdFunc) == "function" and not table.find(blacklisted, cmd) then
                 return true
             end
         end
@@ -34,7 +36,7 @@ function CommandUtils:Init(Commands)
 
     function Commands.Util:FindCommand(cmd)
         for cmdName, cmdFunc in Commands do
-            if cmdName:lower():sub(1, #cmd) == cmd:lower() and type(cmdFunc) == "function" and not table.find(blacklisted, cmdName) then
+            if type(cmdName) == "string" and cmdName:lower():sub(1, #cmd) == cmd:lower() and type(cmdFunc) == "function" and not table.find(blacklisted, cmdName) then
                 Commands.Settings.Command = cmdFunc
                 Commands.Settings.CommandName = cmdName
                 return { Name = cmdName }
@@ -57,8 +59,9 @@ function CommandUtils:Init(Commands)
     end
     
     function Commands.Util:RunCommand(passedArgs)
-        if type(Commands.Settings.Command) == "function" and Commands.Settings.Target then
+        if type(Commands.Settings.Command) == "function" and self:IsCommand(Commands.Settings.CommandName) then
             Commands.Settings.Command(passedArgs)
+            self:Reset()
         end
     end
     

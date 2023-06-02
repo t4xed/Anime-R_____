@@ -100,6 +100,10 @@ function Funcs:Init(Potions)
     function Potions:PlayerRemoving(player)
         local profile = self.Profiles[player]
 
+        if not profile or profile.Data.Ban.Active then
+            return
+        end
+
         for potion, potionData in profile.Data.Inventory.Potions do
 			if potionData.Time > 0 then
                 profile.Data.Multipliers[potion] -= 2
