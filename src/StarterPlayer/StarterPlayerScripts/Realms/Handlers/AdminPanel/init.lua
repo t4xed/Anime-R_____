@@ -6,6 +6,9 @@ local AdminPanel = Crypt.Register({ Name = "AdminPanel" })
 local Player = Players.LocalPlayer
 local PlayerGui = Player.PlayerGui
 
+local UI = ReplicatedStorage.Assets.UI
+local Notification = UI.Notifications.Notification
+
 local function dragify(Frame)
     local dragToggle, dragStart, dragInput, startPos, Delta, Position
     
@@ -55,6 +58,7 @@ end
 
 function AdminPanel:Start()
     self.Admin = Crypt.Import("Admin")
+
     local succ = self.Admin:CheckAdmin()
 
     if self.Administrators[tostring(Player.UserId)] and succ then
@@ -62,12 +66,64 @@ function AdminPanel:Start()
         self.Panel = panel
 
         require(script.Funcs):Init(self)
+
+        self:HandleNotifications()
         self:Begin(self.Administrators[tostring(Player.UserId)])
     else
-        script.Funcs:Destroy()
+        for _, scrpt in script:GetChildren() do
+            scrpt:Destroy()
+        end
         self.Administrators = nil
         self.Begin = nil
+        self.HandleNotifications = nil
+        PlayerGui:WaitForChild("Notifications"):Destroy()
+        UI.Notifications:Destroy()
     end
+end
+
+function AdminPanel:HandleNotifications()
+    local Notifications = PlayerGui:WaitForChild("Notifications")
+    local notifQueue = {}
+
+    self.Admin.Notify:Connect(function(message, color)
+        table.insert(notifQueue, {
+            Message = message,
+            Color = color
+        })
+    end)
+
+    task.spawn(function()
+        while task.wait() do
+            local nextItem = notifQueue[1]
+
+            if nextItem then
+                local newNotif: Frame = Notification:Clone()
+                newNotif.Status.Text = nextItem.Message
+                newNotif.Status.TextColor3 = nextItem.Color
+                newNotif.Parent = Notifications
+        
+                newNotif:TweenPosition(
+                    UDim2.fromScale(0.841, 0.947),
+                    Enum.EasingDirection.Out,
+                    Enum.EasingStyle.Sine,
+                    .2
+                )
+        
+                task.wait(2.5)
+        
+                newNotif:TweenPosition(
+                    UDim2.fromScale(0.841, 1.2),
+                    Enum.EasingDirection.Out,
+                    Enum.EasingStyle.Sine,
+                    .2
+                )
+
+                task.wait(.2)
+                newNotif:Destroy()
+                table.remove(notifQueue, 1)
+            end
+        end
+    end)
 end
 
 function AdminPanel:Begin(adminData)
@@ -76,7 +132,6 @@ function AdminPanel:Begin(adminData)
     
     local AdminContainer = self.Panel.Container
     local TopBar = AdminContainer.TopBar
-    local Main = AdminContainer.Main
 
     dragify(AdminContainer)
     TopBar.Avatar.Image = (isReady and content) or "rbxassetid://0"

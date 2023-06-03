@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Crypt = require(ReplicatedStorage.Cryptware.Crypt)
 
 local Admin = Crypt.Register({ Name = "Admin" }).Expose({
-    RE = { "SendCommand" },
+    RE = { "SendCommand", "SendMessage", "Notify" },
     RF = { "CheckAdmin" }
 })
 
@@ -27,6 +27,7 @@ function Admin:Start()
 	self.Data = Crypt.Import("Data")
     self.Potions = Crypt.Import("Potions")
     self.Level = Crypt.Import("Level")
+    self.Messaging = Crypt.Import("Messaging")
     
 	self.Profiles = self.Data:GetProfiles()
     require(script.Commands):Init(self)

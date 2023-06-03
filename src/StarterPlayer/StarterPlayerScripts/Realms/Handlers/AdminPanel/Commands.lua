@@ -1,7 +1,86 @@
 local Commands = {}
 local CommandUtils = require(script.Parent.CommandUtils)
+local Players = game:GetService("Players")
+local Gamepasses = require(game:GetService("ReplicatedStorage").Shared.Gamepasses)
 
-Commands.IgnoreTarget = { "Ban", "Unban", "Shutdown" }
+local CurrentPlayers
+task.spawn(function()
+    CurrentPlayers = Players:GetPlayers()
+
+    Players.PlayerAdded:Connect(function(player)
+        table.insert(CurrentPlayers, player)
+    end)
+
+    Players.PlayerRemoving:Connect(function(player)
+        local index = table.find(CurrentPlayers, player)
+        table.remove(CurrentPlayers, index)
+    end)
+end)
+
+Commands.CommandArgs = {
+    SetLevel = {
+        CurrentPlayers
+    },
+
+    AddLevel = {
+        CurrentPlayers
+    },
+
+    AddExp = {
+        CurrentPlayers
+    },
+
+    SetLuck = {
+        CurrentPlayers
+    },
+
+    AddLuck = {
+        CurrentPlayers
+    },
+
+    SetPower = {
+        CurrentPlayers
+    },
+
+    AddPower = {
+        CurrentPlayers
+    },
+
+    SetEssence = {
+        CurrentPlayers
+    },
+
+    AddEssence = {
+        CurrentPlayers
+    },
+
+    SetPotion = {
+        CurrentPlayers,
+        { "Essence", "Power", "Exp", "Luck" }
+    },
+
+    GivePotion = {
+        CurrentPlayers,
+        { "Essence", "Power", "Exp", "Luck" }
+    },
+
+    Unban = {
+        CurrentPlayers
+    },
+
+    Ban = {
+        CurrentPlayers
+    },
+
+    Kick = {
+        CurrentPlayers
+    },
+
+    GiveGamepass = {
+        CurrentPlayers,
+        Gamepasses:GetPassNames()
+    },
+}
 
 function Commands.SetLevel(args)
     if not Commands.Settings.Target then
@@ -169,10 +248,58 @@ function Commands.Kick(args)
     Commands.Admin.SendCommand:Fire(Commands.Settings.CommandName, Commands.Settings.Target, reason)
 end
 
-function Commands.Shutdown(args)
-    local shouldForAll = args[3]
+function Commands.GlobalShutdown()
+    Commands.Admin.SendCommand:Fire(Commands.Settings.CommandName)
+end
 
-    Commands.Admin.SendCommand:Fire(Commands.Settings.CommandName, shouldForAll)
+function Commands.Shutdown()
+    Commands.Admin.SendCommand:Fire(Commands.Settings.CommandName)
+end
+
+function Commands.GlobalMessage(args)
+    local message
+    for i = 2, #args do
+        if args[i] then
+            if not message then
+                message = ""
+            end
+            message = `{message} {args[i]}`
+        end
+    end
+
+    if not message or #message == 0 then
+        return
+    end
+
+    Commands.Admin.SendCommand:Fire(Commands.Settings.CommandName, message)
+end
+
+function Commands.ServerMessage(args)
+    local message
+    for i = 2, #args do
+        if args[i] then
+            if not message then
+                message = ""
+            end
+            message = `{message} {args[i]}`
+        end
+    end
+
+    if not message or #message == 0 then
+        return
+    end
+
+    Commands.Admin.SendCommand:Fire(Commands.Settings.CommandName, message)
+end
+
+function Commands.GiveGamepass(args)
+    local gamepass = Gamepasses:FixPassName(args[3])
+
+    if not Commands.Settings.Target or not gamepass or #gamepass == 0 then
+        return
+    end
+
+    Commands.Admin.SendCommand:Fire(Commands.Settings.CommandName, Commands.Settings.Target, Commands.Settings.UseDisplay, gamepass)
 end
 
 CommandUtils:Init(Commands)

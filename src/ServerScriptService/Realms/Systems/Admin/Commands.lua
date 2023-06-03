@@ -2,12 +2,16 @@ local Funcs = {}
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local MessagingService = game:GetService("MessagingService")
 
 local InfiniteMath = require(ReplicatedStorage.Cryptware.InfiniteMath)
 local Utils = require(script.Parent.Utils)
+local Gamepasses = require(ReplicatedStorage.Shared.Gamepasses)
 
 local Commands = {}
-Commands.Chat = {}
+Commands.Chat = require(script.Parent.ChatCommands)
+
+local AdminSystem
 
 function Commands.SetLevel(_, ...)
     local target, amt = ...
@@ -132,27 +136,55 @@ function Commands.Kick(_, ...)
     target:Kick(reason or nil)
 end
 
-function Commands.Shutdown(_, shouldForAll)
-    if not shouldForAll or shouldForAll ~= "all" then
-        Commands.Data.KickMessage = "The server has shutdown, please rejoin."
-        for _, profile in Commands.Data.Profiles do
-            profile:Release()
-        end
+function Commands.GlobalShutdown()
+    MessagingService:PublishAsync("GlobalShutdown")
+end
+
+function Commands.Shutdown()
+    Commands.Data.KickMessage = "The server has shutdown, please rejoin."
+    for _, profile in Commands.Data.Profiles do
+        profile:Release()
     end
 end
 
-function Commands.Chat.Panel(player)
-    local panel = player.PlayerGui:WaitForChild("Admin", 10)
-    
-    if panel then
-        panel.Enabled = not panel.Enabled
+function Commands.GlobalMessage(_, message)
+    MessagingService:PublishAsync("GlobalMessage", message)
+end
+
+function Commands.ServerMessage(_, message)
+    Commands.Messaging:AddMessage({
+        Message = message,
+        Duration = 15,
+        Color = Color3.new(0.968627, 0.250980, 0.250980),
+        Color2 = Color3.new(0.658823, 0.149019, 0.149019)
+    })
+end
+
+function Commands.GiveGamepass(_, target, useDisplay, gamepass)
+    local id = Gamepasses:GetIdByName(gamepass)
+    local targetName = if useDisplay then target.DisplayName else target.name
+
+    if id then
+        local gpName = Gamepasses:GetNameById(id)
+        local profile = Commands.Data.Profiles[target]
+       
+        if not profile.Data.Gamepasses[id] then
+            profile.Data.Gamepasses[id] = true
+            AdminSystem.Notify:Fire(_, `GAVE {targetName:upper()}: {gpName}`, Color3.new(0.439215, 0.933333, 0.588235))
+        else
+            AdminSystem.Notify:Fire(_, `{targetName:upper()} ALREADY OWNS GAMEPASS`, Color3.new(0.913725, 0.560784, 0.035294))
+        end
+    else
+        AdminSystem.Notify:Fire(_, "UNKNOWN GAMEPASS", Color3.new(0.733333, 0.066666, 0.066666))
     end
 end
 
 function Funcs:Init(Admin)
+    AdminSystem = Admin
     Commands.Potions = Admin.Potions
     Commands.Data = Admin.Data
     Commands.Level = Admin.Level
+    Commands.Messaging = Admin.Messaging
 
     Admin.Commands = Commands
 end

@@ -19,8 +19,10 @@ type System = {
 	[any]: any
 }
 
-local Players = game:GetService("Players")
 type InvokeType = "Import" | "Systems"
+
+local Players = game:GetService("Players")
+
 local InvalidExposeName = { "_Comm", "Name" }
 local Util = {}
 
