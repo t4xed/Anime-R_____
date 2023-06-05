@@ -1,5 +1,6 @@
 local Funcs = {}
 
+local DataStoreService = game:GetService("DataStoreService")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
@@ -18,12 +19,25 @@ local function deepSearch(tbl, ...)
 	return subTbl
 end
 
+local function updateGlobal(player, key, val)
+	local succ, err = pcall(function()
+		DataStoreService:GetOrderedDataStore(key):UpdateAsync(player.UserId, function()
+			return math.log10(val+1)*(2^63)/308.254
+		end)
+	end)
+
+	if not succ then
+		warn(err)
+	end
+end
+
 function Funcs:Init(Data)
 	function Data:Set(player, key, value, ...)
 		local toSet = deepSearch(self.Profiles[player].Data, ...)
 		
 		if toSet and toSet[key] then
 			toSet[key] = value
+			updateGlobal(player, key, toSet[key])
 			self.Leaderstats:Update(player, key, toSet[key])
 		end
 	end
@@ -33,6 +47,7 @@ function Funcs:Init(Data)
 		
 		if toSet and toSet[key] then
 			toSet[key] += value
+			updateGlobal(player, key, toSet[key])
 			self.Leaderstats:Update(player, key, toSet[key])
 		end
 	end
@@ -42,6 +57,7 @@ function Funcs:Init(Data)
 		
 		if toSet and toSet[key] then
 			toSet[key] -= value
+			updateGlobal(player, key, toSet[key])
 			self.Leaderstats:Update(player, key, toSet[key])
 		end
 	end
@@ -51,6 +67,7 @@ function Funcs:Init(Data)
 		
 		if toSet and toSet[key] then
 			toSet[key] *= value
+			updateGlobal(player, key, toSet[key])
 			self.Leaderstats:Update(player, key, toSet[key])
 		end
 	end
@@ -60,8 +77,13 @@ function Funcs:Init(Data)
 		
 		if toSet and toSet[key] then
 			toSet[key] /= value
+			updateGlobal(player, key, toSet[key])
 			self.Leaderstats:Update(player, key, toSet[key])
 		end
+	end
+
+	function Data:GetMyProfile(player)
+		return self:decyclic(self.Profiles[player], {self.Profiles[player]})
 	end
 	
 	function Data:GetProfile(player)
@@ -70,6 +92,14 @@ function Funcs:Init(Data)
 
 	function Data:GetProfiles()
 		return self.Profiles
+	end
+
+	function Data:HandleLockedUpdate(profile, update_id, update_data)
+		if update_data.Type == "UpdatePlace" then
+			profile.Data.Leaderboards[update_data.Item].Place = update_data.Value
+		end
+
+		profile.GlobalUpdates:ClearLockedUpdate(update_id)
 	end
 	
 	function Data:PlayerAdded(player)
@@ -90,8 +120,25 @@ function Funcs:Init(Data)
 					self.Profiles[player] = nil
 					player:Kick(self.KickMessage)
 				end)
+
 				if player:IsDescendantOf(Players) == true then
 					self.Profiles[player] = profile
+
+					for _, update in profile.GlobalUpdates:GetActiveUpdates() do
+						profile.GlobalUpdates:LockActiveUpdate(update[1])
+					end
+
+					for _, update in profile.GlobalUpdates:GetLockedUpdates() do
+						self:HandleLockedUpdate(profile, update[1], update[2])
+					end
+
+					profile.GlobalUpdates:ListenToNewActiveUpdate(function(update_id, _)
+						profile.GlobalUpdates:LockActiveUpdate(update_id)
+					end)
+
+					profile.GlobalUpdates:ListenToNewLockedUpdate(function(update_id, update_data)
+						self:HandleLockedUpdate(profile, update_id, update_data)
+					end)
 				else
 					profile:Release()
 				end

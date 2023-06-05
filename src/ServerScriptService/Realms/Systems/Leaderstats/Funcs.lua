@@ -1,14 +1,14 @@
 local Funcs = {}
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local InfiniteMath = require(ReplicatedStorage.Cryptware.InfiniteMath)
+local Abbreviate = require(ReplicatedStorage.Cryptware.Abbreviate)
 
 function Funcs:Init(Leaderstats)
 	function Leaderstats:Update(player, leaderstat, value)
 		local ldsObj = player.leaderstats:WaitForChild(leaderstat, 5)
 		
 		if ldsObj then
-			ldsObj.Value = value:GetSuffix()
+			ldsObj.Value = Abbreviate:Abbreviate(value)
 		end
 	end
 	
@@ -21,10 +21,10 @@ function Funcs:Init(Leaderstats)
 		
 		for _, lds in self.DisplayStats do
 			local ldsValue = Instance.new("StringValue")
-			local ldsData = InfiniteMath.new(profile.Data.PlayerData[lds])
+			local ldsData = profile.Data.PlayerData[lds]
 
 			ldsValue.Name = lds
-			ldsValue.Value = ldsData:GetSuffix()
+			ldsValue.Value = Abbreviate:Abbreviate(ldsData)
 			ldsValue.Parent = leaderstats
 		end
 	end

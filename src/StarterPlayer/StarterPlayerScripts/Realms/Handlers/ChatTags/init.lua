@@ -9,6 +9,7 @@ local Player = Players.LocalPlayer
 local PlayerGui = Player.PlayerGui
 
 function ChatTags:Init()
+	self.Data = Crypt.Import("Data")
 	self.GroupId = 32441125
 	self.GroupRanks = require(script.Ranks)
 
@@ -48,6 +49,7 @@ function ChatTags:HandleMessage(message: TextChatMessage)
 		local player = Players:GetPlayerByUserId(message.TextSource.UserId)
 		local rank = Player:GetRoleInGroup(self.GroupId)
 		local rankInfo = self.GroupRanks[rank]
+		local profile = self.Data:GetMyProfile()
 		
 		if rankInfo then
 			local prefText = `<font color='{rankInfo.Color}'>[{rankInfo.Name}] </font>`
@@ -61,9 +63,17 @@ function ChatTags:HandleMessage(message: TextChatMessage)
 				prefText = `{prefText}<font color='{rankInfo2.Color}'>[{rankInfo2.Name}] </font>`
 			end
 			
-			properties.PrefixText = `{prefText}{message.PrefixText}`
+			properties.PrefixText = prefText
+		end
+
+		for _, lbData in profile.Data.Leaderboards do
+			if lbData.Place > 0 then
+				properties.PrefixText = `{properties.PrefixText}<font color='{lbData.Color}'>[#{lbData.Place} {lbData.Emoji}] </font>`
+			end
 		end
 	end
+
+	properties.PrefixText = `{properties.PrefixText}{message.PrefixText}`
 
 	return properties
 end

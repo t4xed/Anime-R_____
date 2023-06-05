@@ -2,7 +2,9 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Crypt = require(ReplicatedStorage.Cryptware.Crypt)
 
-local Data = Crypt.Register({ Name = "Data" })
+local Data = Crypt.Register({ Name = "Data" }).Expose({
+	RF = { "GetMyProfile" }
+})
 
 function Data:Init()
 	local key = self.Util.KeyHandler:GetKey()
@@ -11,7 +13,7 @@ function Data:Init()
 
 	self.ProfileStore = ProfileService.GetProfileStore(key, DefaultData)
 	self.Profiles = {}
-	self.UseMock = true
+	--self.UseMock = true
 
 	require(script.Funcs):Init(self)
 end
