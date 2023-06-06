@@ -1,7 +1,7 @@
 local KeyHandler = {}
 
 local isTesting = true
-local keyVersion = -8
+local keyVersion = -9
 local isStudio = game["Run Service"]:IsStudio()
 
 function KeyHandler:GetKey()

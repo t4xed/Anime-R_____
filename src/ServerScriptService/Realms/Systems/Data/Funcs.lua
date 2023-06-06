@@ -2,7 +2,10 @@ local Funcs = {}
 
 local DataStoreService = game:GetService("DataStoreService")
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+
+local InfiniteMath = require(ReplicatedStorage.Cryptware.InfiniteMath)
 
 local function deepSearch(tbl, ...)
 	local keys = {...}
@@ -21,8 +24,8 @@ end
 
 local function updateGlobal(player, key, val)
 	local succ, err = pcall(function()
-		DataStoreService:GetOrderedDataStore(key):UpdateAsync(player.UserId, function()
-			return math.log10(val+1)*(2^63)/308.254
+		DataStoreService:GetOrderedDataStore(key .. "_2"):UpdateAsync(player.UserId, function()
+			return val:ConvertForLeaderboards()
 		end)
 	end)
 
@@ -95,9 +98,7 @@ function Funcs:Init(Data)
 	end
 
 	function Data:HandleLockedUpdate(profile, update_id, update_data)
-		if update_data.Type == "UpdatePlace" then
-			profile.Data.Leaderboards[update_data.Item].Place = update_data.Value
-		end
+		
 
 		profile.GlobalUpdates:ClearLockedUpdate(update_id)
 	end
@@ -139,6 +140,9 @@ function Funcs:Init(Data)
 					profile.GlobalUpdates:ListenToNewLockedUpdate(function(update_id, update_data)
 						self:HandleLockedUpdate(profile, update_id, update_data)
 					end)
+
+					updateGlobal(player, "Essence", InfiniteMath.new(profile.Data.PlayerData.Essence))
+					updateGlobal(player, "Power", InfiniteMath.new(profile.Data.PlayerData.Power))
 				else
 					profile:Release()
 				end

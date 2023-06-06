@@ -6,6 +6,7 @@ local MessagingService = game:GetService("MessagingService")
 
 local Utils = require(script.Parent.Utils)
 local Gamepasses = require(ReplicatedStorage.Shared.Gamepasses)
+local InfiniteMath = require(ReplicatedStorage.Cryptware.InfiniteMath)
 
 local Commands = {}
 Commands.Chat = require(script.Parent.ChatCommands)
@@ -45,9 +46,9 @@ function Commands.AddLuck(_, ...)
     local target, amt, setType = ...
 
     if setType then
-        Commands.Data[setType](Commands.Data, target, "Luck", tonumber(amt), "PlayerData")
+        Commands.Data[setType](Commands.Data, target, "Luck", InfiniteMath.new(amt .. ", 0"), "PlayerData")
     else
-        Commands.Data:Add(target, "Luck", tonumber(amt), "PlayerData")
+        Commands.Data:Add(target, "Luck", InfiniteMath.new(amt .. ", 0"), "PlayerData")
     end
 end
 
@@ -60,9 +61,9 @@ function Commands.AddPower(_, ...)
     local target, amt, setType = ...
 
     if setType then
-        Commands.Data[setType](Commands.Data, target, "Power", tonumber(amt), "PlayerData")
+        Commands.Data[setType](Commands.Data, target, "Power", InfiniteMath.new(amt .. ", 0"), "PlayerData")
     else
-        Commands.Data:Add(target, "Power", tonumber(amt), "PlayerData")
+        Commands.Data:Add(target, "Power", InfiniteMath.new(amt .. ", 0"), "PlayerData")
     end
 end
 
@@ -75,9 +76,9 @@ function Commands.AddEssence(_, ...)
     local target, amt, setType = ...
 
     if setType then
-        Commands.Data[setType](Commands.Data, target, "Essence", tonumber(amt), "PlayerData")
+        Commands.Data[setType](Commands.Data, target, "Essence", InfiniteMath.new(amt .. ", 0"), "PlayerData")
     else
-        Commands.Data:Add(target, "Essence", tonumber(amt), "PlayerData")
+        Commands.Data:Add(target, "Essence", InfiniteMath.new(amt .. ", 0"), "PlayerData")
     end
 end
 

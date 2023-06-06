@@ -19,28 +19,30 @@ type System = {
 	[any]: any
 }
 
-type InvokeType = "Import" | "Systems"
-
 local Players = game:GetService("Players")
 
 local InvalidExposeName = { "_Comm", "Name" }
 local Util = {}
 
-for _, module in script.Parent.Parent:GetChildren() do
-	if module:IsA("ModuleScript") and module.Name ~= "Crypt" then
-		Util[module.Name] = require(module)
+local initialized = false
+local created = false
+local started = false
+local ready = false
+
+local function initUtil()
+	for _, module in script.Parent.Parent:GetChildren() do
+		if module:IsA("ModuleScript") and module.Name ~= "Crypt" then
+			Util[module.Name] = require(module)
+		end
 	end
 end
 
 local function validateExposeName(exposeName)
-	if exposeName[InvalidExposeName] then
+	if table.find(InvalidExposeName, exposeName) then
 		return false
 	end
 	return true
 end
-
-local started = false
-local ready = false
 
 local function createMiddleware()
 	local mdw = Instance.new("RemoteFunction")
@@ -173,8 +175,7 @@ function CryptServer.Register(systemDef: SystemDef): System
 
 	function system.Expose(exposeDef: ExposeDef)
 		assert(not clientSystems[system.Name], "Cannot expose the system more than once")
-		createSystemsFolder()
-
+		
 		local clientSystem = {
 			Name = system.Name,
 			_Comm = {}
@@ -275,6 +276,16 @@ function CryptServer.Start()
 	end
 
 	ready = true
+end
+
+if not initialized then
+	initialized = true
+	initUtil()
+end
+
+if not created then
+	created = true
+	createSystemsFolder()
 end
 
 return CryptServer

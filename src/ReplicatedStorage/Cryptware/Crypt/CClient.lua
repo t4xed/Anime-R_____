@@ -28,7 +28,7 @@ local gotSystems = false
 local function getSystems()
 	local _systems = script.Parent.CMiddleware:InvokeServer("Systems")
 	script.Parent.CMiddleware:Destroy()
-	if _systems and not gotSystems then
+	if _systems then
 		systems = _systems
 		gotSystems = true
 	end
@@ -118,6 +118,7 @@ function CryptClient.Start()
 end
 
 if not gotSystems then
+	gotSystems = true
 	getSystems()
 end
 

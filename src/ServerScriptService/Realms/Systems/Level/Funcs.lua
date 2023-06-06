@@ -6,6 +6,8 @@ local Players = game:GetService("Players")
 local InfiniteMath = require(ReplicatedStorage.Cryptware.InfiniteMath)
 local Assets = ReplicatedStorage.Assets
 
+local LevelUpVFX = Assets.Particles.LevelUp
+
 local function clone(tbl)
 	local newTbl = {}
 	for index, value in tbl do
@@ -23,15 +25,32 @@ function Funcs:Init(Level)
 		return self.Profiles[player].LevelData
 	end
 
-	function Level:LevelUp(levelData, level)
+	function Level:LevelUp(player, levelData, level)
 		levelData.Level = level or levelData.Level + 1
 		levelData.CurrentExp = 0
 		levelData.MaxExp = 10 + (levelData.Level * 10)
+
+		task.spawn(function()
+			local hrp = player.Character.HumanoidRootPart
+
+			for _, attachment: Attachment in LevelUpVFX.HRP:GetChildren() do
+				local attch = attachment:Clone()
+				attch.Parent = hrp
+
+				task.delay(2, function()
+					for _, emitter: ParticleEmitter in attch:GetChildren() do
+						emitter.Enabled = false
+					end
+
+					game.Debris:AddItem(attch, .5)
+				end)
+			end
+		end)
 	end
 
-	function Level:SafeLevel(levelData)
+	function Level:SafeLevel(player, levelData)
 		if levelData.Level >= self.MaxLevel then
-			self:LevelUp(levelData, self.MaxLevel)
+			self:LevelUp(player, levelData, self.MaxLevel)
 			return false
 		end
 		return true
@@ -43,16 +62,16 @@ function Funcs:Init(Level)
 		end
 	end
 
-	function Level:CheckExp(levelData, amt)
+	function Level:CheckExp(player, levelData, amt)
 		local failed = false
 
 		while task.wait() do
-			if not self:SafeLevel(levelData) then
+			if not self:SafeLevel(player, levelData) then
 				failed = true
 				break
 			elseif self:ExpCap(levelData, amt) then
 				amt = (levelData.CurrentExp + amt) - levelData.MaxExp
-				self:LevelUp(levelData)
+				self:LevelUp(player, levelData)
 			else
 				break
 			end
@@ -67,7 +86,7 @@ function Funcs:Init(Level)
 		local profile = self.Profiles[player]
 		local levelData = profile.Data.LevelData
 		
-		self:LevelUp(levelData, lvl)
+		self:LevelUp(player, levelData, lvl)
 		return levelData
 	end
 	
@@ -77,7 +96,7 @@ function Funcs:Init(Level)
 		local multis = profile.Data.Multipliers
 		
 		levelData.CurrentExp += amt * (multis.Exp > 0 and multis.Exp or 1)
-		self:CheckExp(levelData, amt)
+		self:CheckExp(player, levelData, amt)
 
 		return levelData
 	end

@@ -1,22 +1,10 @@
+local InfiniteMath = require(game:GetService("ReplicatedStorage").Cryptware.InfiniteMath)
+
 return {
 	PlayerData = {
-		Essence = 0,
-		Power = 1,
-		Luck = 1
-	},
-
-	Leaderboards = {
-		Essence = {
-			Place = 0,
-			Emoji = "🔮",
-			Color = "#a026de"
-		},
-
-		Power = {
-			Place = 0,
-			Emoji = "🥊",
-			Color = "#de3226"
-		},
+		Essence = InfiniteMath.new(0),
+		Power = InfiniteMath.new(1),
+		Luck = InfiniteMath.new(1),
 	},
 	
 	LevelData = {
@@ -34,15 +22,15 @@ return {
 	
 	PlayerStats = {
 		Totals = {
-			Power = 1,
-			Essence = 1,
+			Power = InfiniteMath.new(1),
+			Essence = InfiniteMath.new(0),
 			MobsKilled = 0,
 			IslandsUnlocked = 1,
 		},
 		
 		Current = {
-			Power = 1,
-			Essence = 1,
+			Power = InfiniteMath.new(1),
+			Essence = InfiniteMath.new(0),
 			MobsKilled = 0,
 			IslandsUnlocked = 1,
 		}
