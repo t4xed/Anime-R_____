@@ -2,7 +2,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
-local ItemFrame = ReplicatedStorage.Assets.UI.AdminPanel.Item
+local ItemFrame = ReplicatedStorage.Assets.UI.AdminPanel.DropItem
+local ItemFrame2 = ReplicatedStorage.Assets.UI.AdminPanel.ScrollItem
 
 local Funcs = {}
 local UIFuncs = {}
@@ -10,16 +11,35 @@ UIFuncs.Connections = {}
 
 local Commands = require(script.Parent.Commands)
 
-local function scrollText(textBox)
-    if textBox.TextBounds.X > textBox.AbsoluteSize.X then
-        textBox.TextXAlignment = Enum.TextXAlignment.Left
-        textBox.Position = UDim2.new(0, textBox.Position.X.Offset - 50, 0, textBox.Position.Y.Offset)
+function UIFuncs:HandleCommands()
+    local CommandsScroll = self.AdminPanel.Container.Commands.ScrollContainer.Scroll
+    local layout = CommandsScroll.UIListLayout
+    
+    for _, cmdInfo in Commands.CommandInfo do
+        local newItem = ItemFrame2:Clone()
+        newItem.ItemContainer.CommandName.Text = cmdInfo.Name:lower()
+        newItem.ItemContainer.CommandDesc.Text = cmdInfo.Desc
+        newItem.ItemContainer.CommandUsage.Text = cmdInfo.Usage
+        newItem.Parent = CommandsScroll
 
-        if textBox.Position.X.Offset + textBox.TextBounds.X < 0 then
-            textBox.Position = UDim2.new(0, textBox.AbsoluteSize.X, 0, textBox.Position.Y.Offset)
-            textBox.TextXAlignment = Enum.TextXAlignment.Right
-        end
+        newItem.ItemContainer.Button.MouseButton1Click:Connect(function()
+            print("Clicked:", cmdInfo.Name)
+        end)
     end
+
+    CommandsScroll.CanvasSize = UDim2.new(0,0,0,layout.AbsoluteContentSize.Y)
+
+    self.AdminPanel.Container.Main.Commands.Button.MouseButton1Click:Connect(function()
+        self.AdminPanel.Container.Commands.Visible = true
+        self.AdminPanel.Container.TopBar.Back.Visible = true
+        self.AdminPanel.Container.Main.Visible = false
+    end)
+
+    self.AdminPanel.Container.TopBar.Back.MouseButton1Click:Connect(function()
+        self.AdminPanel.Container.Main.Visible = true
+        self.AdminPanel.Container.TopBar.Back.Visible = false
+        self.AdminPanel.Container.Commands.Visible = false
+    end)
 end
 
 function UIFuncs:HandleQuickCommand()
@@ -145,8 +165,7 @@ function UIFuncs:HandleQuickCommand()
     end)
     
     cmdBox:GetPropertyChangedSignal("Text"):Connect(function()
-        --scrollText(cmdBox)
-        local succ, err = pcall(function()
+        local succ, _ = pcall(function()
             if #cmdBox.Text > 0 then
                 cmdBox.TextXAlignment = Enum.TextXAlignment.Left
             else

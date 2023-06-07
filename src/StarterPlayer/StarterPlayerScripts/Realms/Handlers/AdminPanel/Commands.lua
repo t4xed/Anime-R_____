@@ -17,6 +17,36 @@ task.spawn(function()
     end)
 end)
 
+Commands.CommandInfo = {
+    { Name = "SetLevel", Desc = "Sets a specified player's level.", Usage = "<player_name> <number>" },
+    { Name = "AddLevel", Desc = "Adds to a specified player's level.", Usage = "<player_name> <number>" },
+
+    { Name = "AddExp", Desc = "Adds to a specified player's exp.", Usage = "<player_name> <number>" },
+    
+    { Name = "SetLuck", Desc = "Sets a specified player's luck.", Usage = "<player_name> <number>" },
+    { Name = "AddLuck", Desc = "Adds to a specified player's luck.", Usage = "<player_name> <number>" },
+
+    { Name = "SetPower", Desc = "Sets a specified player's power.", Usage = "<player_name> <number>" },
+    { Name = "AddPower", Desc = "Adds to a specified player's power.", Usage = "<player_name> <number>" },
+
+    { Name = "SetEssence", Desc = "Sets a specified player's essence.", Usage = "<player_name> <number>" },
+    { Name = "AddEssence", Desc = "Adds to a specified player's essence.", Usage = "<player_name> <number>" },
+
+    { Name = "SetPotion ", Desc = "Sets a specified player's potion duration for the given potion type.", Usage = "<player_name> <potion_type> <number>" },
+    { Name = "GivePotion", Desc = "Adds to a specified player's potion duration for the given potion type.", Usage = "<player_name> <potion_type> <number>" },
+
+    { Name = "Ban", Desc = "Permanently bans a specified user ID.", Usage = "<number>" },
+    { Name = "Unban", Desc = "Unbans a specified user ID.", Usage = "<number>" },
+    { Name = "Kick", Desc = "Kicks a specified player with optional reason.", Usage = "<player_name> [reason]" },
+
+    { Name = "GiveGamepass", Desc = "Attempts to give a specified user a gamepass.", Usage = "<player_name> <pass_name>" },
+
+    { Name = "GlobalShutdown", Desc = "Shuts all running servers down.", Usage = "N/A" },
+    { Name = "Shutdown", Desc = "Shuts the current server down.", Usage = "N/A" },
+    { Name = "GlobalMessage", Desc = "Notifies all running servers with the specified message.", Usage = "<message>" },
+    { Name = "ServerMessage", Desc = "Notifies the current server with the specified message.", Usage = "<message>" },
+}
+
 Commands.CommandArgs = {
     SetLevel = {
         CurrentPlayers

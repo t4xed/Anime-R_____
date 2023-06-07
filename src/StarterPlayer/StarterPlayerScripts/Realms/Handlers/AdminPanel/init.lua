@@ -137,6 +137,7 @@ function AdminPanel:Begin(adminData)
     TopBar.Avatar.Image = (isReady and content) or "rbxassetid://0"
     TopBar.Info.Text = `{Player.DisplayName} | {adminRank}`
 
+    self.UI:HandleCommands()
     self.UI:HandleQuickCommand()
 end
 

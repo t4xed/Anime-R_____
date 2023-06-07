@@ -5,3 +5,7 @@ Crypt.Include(script.Parent.Systems)
 Crypt.Utils(script.Parent.Utils)
 Crypt.Utils(ReplicatedStorage.Shared)
 Crypt.Start()
+
+for _, component in script.Parent.Components:GetChildren() do
+    require(component)
+end

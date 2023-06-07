@@ -1,19 +1,13 @@
 return {
-    IsBusy = false,
-    IsMoving = false,
-    IsAttacking = false,
-    IsStunned = false,
-    IsFocusing = false,
-    IsChasing = false,
+    Default = {
+        Health = 100,
+        MaxHealth = 100,
+        RegenerateHealth = 6.0,
+        WalkSpeed = 16,
+        JumpPower = 50,
+        BaseDamage = 2.5,
+        SavedPosition = nil,
+    },
 
-    SavedPosition = nil,
-
-    WalkSpeed = 16,
-    JumpPower = 50,
-
-    MaxHealth = 100,
-    RegenerateHealth = 6.0,
-    Health = 100,
-
-    BaseDamage = 2.5,
+    
 }
