@@ -1,6 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Core = {}
 
+local Core = {}
 local positions = {}
 
 for _, pos in workspace.Mobs.Positions:GetChildren() do
@@ -17,6 +17,23 @@ local function getOpenPosition()
             return pos, key
         end
     end
+end
+
+function Core:Initialize()
+    self:DisplayName(self.Instance.Name)
+    self:DisplayHealth(self.Properties.Health)
+
+    self:Spawn()
+    self:SetState("Idle")
+
+    self.ID = #self.Active + 1
+
+    --[[task.delay(5, function()
+        self:Despawn()
+        self:Deconstruct()
+    end)]]
+
+    -- print(self.Instance.Name .. " constructed, data:", active)
 end
 
 function Core:Spawn()
