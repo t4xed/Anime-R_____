@@ -8,6 +8,8 @@ local Funcs = {}
 local EntityFuncs = {}
 local activeEntities = {}
 
+EntityFuncs.__index = EntityFuncs
+
 function EntityFuncs:SetState(state)
     for _state, val in self.States do
         if _state == state then
