@@ -1,26 +1,26 @@
 local State = {}
 
-function State:Idle(active, current)
+function State:Idle(current)
     --print("Idle:", current)
 end
 
-function State:Moving(active, current)
+function State:Moving(current)
     print("Moving:", current)
 end
 
-function State:Attacking(active, current)
+function State:Attacking(current)
     print("Attacking:", current)
 end
 
-function State:Stunned(active, current)
+function State:Stunned(current)
     print("Stunned:", current)
 end
 
-function State:Focusing(active, current)
+function State:Focusing(current)
     print("Focusing:", current)
 end
 
-function State:Chasing(active, current)
+function State:Chasing(current)
     print("Chasing:", current)
 end
 
