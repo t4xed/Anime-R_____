@@ -112,6 +112,15 @@ end
 
 local function initData()
 	local ds = findData()
+	local runMode = game:GetService("RunService"):IsRunMode() and #Players:GetPlayers() == 0
+	
+	if runMode then
+		task.wait(3)
+
+		if #Players:GetPlayers() > 0 then
+			runMode = false
+		end
+	end
 
 	if not ds then
 		return
@@ -121,7 +130,7 @@ local function initData()
 		ds:Init()
 	end
 
-	if ds.PlayerAdded then
+	if ds.PlayerAdded and not runMode then
 		for _, plr in Players:GetPlayers() do
 			task.spawn(function()
 				ds:PlayerAdded(plr)
@@ -138,7 +147,7 @@ local function initData()
 		end)
 	end
 
-	if not ds.Ready then
+	if not ds.Ready and not runMode then
 		repeat task.wait() until ds.Ready
 		ds.Ready = nil
 	end

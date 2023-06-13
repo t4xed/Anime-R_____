@@ -1,5 +1,5 @@
 return {
-    Busy = false,
+    Idle = false,
     Moving = false,
     Attacking = false,
     Stunned = false,
